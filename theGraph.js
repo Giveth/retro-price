@@ -1,6 +1,6 @@
 const axios = require('axios')
 async function fetchSwapForPair(pairId, timestamp) {
-  console.log(`pairId ---> : ${pairId}`)
+  console.log(`fetchSwapForPair ---> : ${pairId} > ${timestamp}`)
   //, timestamp: "1616946948" greater thans
   const query = `
   query GetSwap {
@@ -33,7 +33,8 @@ async function fetchSwapForPair(pairId, timestamp) {
     }
   })
 
-  console.log(`response.data : ${JSON.stringify(response.data, null, 2)}`)
+  console.log(`swaps[0].amount0In ---> : ${response.data.data.swaps[0].amount0In}`)
+  //console.log(`response.data : ${JSON.stringify(response.data, null, 2)}`)
   return response.data.data.swaps
   
 }
