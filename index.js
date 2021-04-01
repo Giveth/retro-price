@@ -35,8 +35,17 @@ async function processDonations(donations) {
     } else {
       throw new Error('Should not happen')
     }
-    console.log(price)
-    
+    console.log({price, id: donation.id})
+    let valueEth
+    if(donation.currency === 'ETH') {
+      valueEth = donation.amount
+      valueUsd = 1 / price * donation.amount
+    } else if(donation.currency === 'XDAI') {
+      valueEth = price * donation.amount
+      valueUsd = donation.amount
+    }
+    const priceUsd = 1/price
+    const res = await client.query('update donation set "priceEth" = $1, "valueEth" = $3, "priceUsd" = $4 where id = $2', [price, donation.id, valueEth, priceUsd])
     result = it.next()
   }
 }
@@ -44,9 +53,9 @@ async function processDonations(donations) {
 async function run() {
   await client.connect()
   
-  const res = await client.query('select d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where d."priceEth" is null')
+  const res = await client.query('select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where d."priceEth" is null')
   
-  processDonations(res.rows)
+  await processDonations(res.rows)
 
   await client.end()
 }
