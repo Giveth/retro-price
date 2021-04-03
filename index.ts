@@ -26,22 +26,22 @@ async function processDonations (donations) {
         : 'USDC'
 
     let valueEth, valueUsd, priceEth: number, priceUsd: number
-    if (donation.currency === 'ETH' || donation.currency === 'XDAI') {
-      priceEth = await getPriceAtTime(
-        donation.currency,
-        baseCurrency,
-        donatedTime,
-        chainId
-      )
+    if (
+      donation.currency === 'ETH' ||
+      donation.currency === 'XDAI' ||
+      donation.currency === 'DAI'
+    ) {
+      priceEth = await getPriceAtTime('ETH', 'USDC', donatedTime, chainId)
 
       if (donation.currency === 'ETH') {
         valueEth = donation.amount
         valueUsd = (1 / priceEth) * donation.amount
-      } else if (donation.currency === 'XDAI') {
-        valueEth = priceEth * donation.amount
+        priceUsd = 1 / priceEth
+      } else if (donation.currency === 'XDAI' || donation.currency === 'DAI') {
+        valueEth = (1 / priceEth) * donation.amount
         valueUsd = donation.amount
+        priceUsd = 1
       }
-      priceUsd = 1 / priceEth
     } else {
       priceUsd = await getPriceAtTime(
         donation.currency,
