@@ -45,7 +45,7 @@ async function processDonations (donations) {
     } else {
       priceEth = await getPriceAtTime(
         donation.currency,
-        baseCurrency,
+        'ETH',
         donatedTime,
         chainId
       )
