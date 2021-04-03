@@ -45,7 +45,7 @@ async function processDonations (donations) {
     } else {
       priceUsd = await getPriceAtTime(
         donation.currency,
-        'WXDAI',
+        baseCurrency,
         donatedTime,
         chainId
       )
