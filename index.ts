@@ -1,5 +1,5 @@
 const { Client } = require('pg')
-import { getPriceAtTime, convertPriceUsdToEth } from './monoswap'
+import { getPriceAtTime, convertPriceEthToUsd } from './monoswap'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -43,14 +43,14 @@ async function processDonations (donations) {
         priceUsd = 1
       }
     } else {
-      priceUsd = await getPriceAtTime(
+      priceEth = await getPriceAtTime(
         donation.currency,
         baseCurrency,
         donatedTime,
         chainId
       )
 
-      priceEth = await convertPriceUsdToEth(priceUsd, donatedTime)
+      priceUsd = await convertPriceEthToUsd(priceEth, donatedTime)
 
       valueEth = priceEth * donation.amount
       valueUsd = priceUsd * donation.amount

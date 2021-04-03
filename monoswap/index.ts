@@ -140,6 +140,19 @@ export async function convertPriceUsdToEth (priceInUsd, timeStamp) {
   return priceEth
 }
 
+export async function convertPriceEthToUsd (priceInEth, timeStamp) {
+  const priceEthUsdAtTime: number = await getPriceAtTime(
+    'ETH',
+    'USDT',
+    timeStamp,
+    1
+  )
+
+  const priceUsd = priceInEth * priceEthUsdAtTime
+
+  return priceUsd
+}
+
 export async function getPriceAtTime (
   from: string,
   to: string,
