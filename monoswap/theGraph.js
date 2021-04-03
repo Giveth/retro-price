@@ -1,5 +1,5 @@
 const axios = require('axios')
-async function fetchSwapForPair(pairId, timestamp) {
+async function fetchSwapForPair(pairId, timestamp, chainId) {
   const query = `
   query GetSwap {
     swaps(first: 1, orderBy: timestamp, orderDirection: desc, where:
@@ -23,8 +23,16 @@ async function fetchSwapForPair(pairId, timestamp) {
   }
   `
   //console.log(`query ---> : ${query}`)
+  let graphUrl = ''
+  if(chainId === 1) {
+    graphUrl = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
+  } else if(chainId === 100) {
+    graphUrl = 'https://api.thegraph.com/subgraphs/name/1hive/uniswap-v2'
+  } else {
+    throw new Error("unsupported chainId")
+  }
   const response = await axios({
-    url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+    url: graphUrl,
     method: 'post',
     data: {
       query
