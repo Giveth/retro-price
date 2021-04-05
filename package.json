@@ -16,9 +16,9 @@
     "dotenv": "^8.2.0",
     "esbuild": "^0.11.4",
     "esbuild-runner": "^1.3.2",
-    "ethers": "^5.1.0",
     "honeyswap-sdk": "^1.0.0",
     "mocha": "^8.3.2",
+    "monoswap": "^0.2.2",
     "pg": "^8.5.1"
   },
   "devDependencies": {

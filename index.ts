@@ -1,5 +1,5 @@
 const { Client } = require('pg')
-import { getPriceAtTime, convertPriceEthToUsd } from './monoswap'
+import { getPriceAtTime, convertPriceEthToUsd } from 'monoswap'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
