@@ -50,6 +50,7 @@ async function processDonations (donations) {
         chainId
       )
 
+      console.log(`priceEth at time ---> : ${priceEth}`)
       priceUsd = await convertPriceEthToUsd(priceEth, donatedTime)
 
       valueEth = priceEth * donation.amount

@@ -14,6 +14,55 @@ const cmc200 = {
   tokens: [
     {
       chainId: 1,
+      address: '0x417ffdbc285dd2c4dc00937798ab901634137caa',
+      symbol: 'BLFI',
+      name: 'BlackFisk',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0x6149c26cd2f7b5ccdb32029af817123f6e37df5b',
+      symbol: 'LPOOL',
+      name: 'Launchpool token',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0xbf494f02ee3fde1f20bee6242bce2d1ed0c15e47',
+      symbol: 'WORLD',
+      name: 'World Token',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+      symbol: 'UNI',
+      name: 'Uniswap',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0xb9d99c33ea2d86ec5ec6b8a4dd816ebba64404af',
+      symbol: 'K21',
+      name: 'k21.kanon.art',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      symbol: 'WETH',
+      name: 'Wrapped Ether',
+      decimals: 18
+    },
+    {
+      chainId: 1,
+      address: '0x56a980328AEE33AaBB540A02E002C8323326bf36',
+      symbol: 'POODL',
+      name: 'POODLE',
+      decimals: 9
+    },
+    {
+      chainId: 1,
       address: '0xd56dac73a4d6766464b38ec6d91eb45ce7457c44',
       symbol: 'PAN',
       name: 'Panvala',

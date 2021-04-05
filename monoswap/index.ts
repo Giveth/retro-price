@@ -87,6 +87,41 @@ function getTestPrice (symbol, baseSymbol, chainId) {
 function getETHisETHPrice () {
   return 1
 }
+
+async function getPairFromSymbols (
+  symbol: string,
+  baseSymbol: string,
+  chainId: number
+) {
+  const sdk = new Sdk(chainId)
+
+  if (isETHisETH(symbol, baseSymbol)) return getETHisETHPrice()
+  if (isTestPrice(symbol, baseSymbol))
+    return getTestPrice(symbol, baseSymbol, chainId)
+
+  const token = await sdk.getSwapToken(getTokenFromList(symbol, chainId))
+
+  if (!token) throw Error(`Symbol ${symbol} not found in our token list`)
+
+  const baseToken = await sdk.getSwapToken(
+    getTokenFromList(baseSymbol, chainId)
+  )
+  if (!baseToken)
+    throw Error(`BaseSymbol ${baseSymbol} not found in our token list`)
+
+  if (token.address === baseToken.address) return 1
+
+  console.log(
+    `getNetworkFromChainId(chainId) ---> : ${getNetworkFromChainId(chainId)}`
+  )
+  return await sdk.getPair(
+    token,
+    baseToken,
+    getProvider(getNetworkFromChainId(chainId)),
+    chainId
+  )
+}
+
 export async function getTokenPrice (
   symbol: string,
   baseSymbol: string,
@@ -95,31 +130,11 @@ export async function getTokenPrice (
   try {
     const sdk = new Sdk(chainId)
 
-    if (isETHisETH(symbol, baseSymbol)) return getETHisETHPrice()
-    if (isTestPrice(symbol, baseSymbol))
-      return getTestPrice(symbol, baseSymbol, chainId)
+    const pair = getPairFromSymbols(symbol, baseSymbol, chainId)
 
     const token = await sdk.getSwapToken(getTokenFromList(symbol, chainId))
 
     if (!token) throw Error(`Symbol ${symbol} not found in our token list`)
-
-    const baseToken = await sdk.getSwapToken(
-      getTokenFromList(baseSymbol, chainId)
-    )
-    if (!baseToken)
-      throw Error(`BaseSymbol ${baseSymbol} not found in our token list`)
-
-    if (token.address === baseToken.address) return 1
-
-    console.log(
-      `getNetworkFromChainId(chainId) ---> : ${getNetworkFromChainId(chainId)}`
-    )
-    const pair = await sdk.getPair(
-      token,
-      baseToken,
-      getProvider(getNetworkFromChainId(chainId)),
-      chainId
-    )
     return sdk.getPrice(pair, token, chainId)
   } catch (error) {
     console.error(error)
@@ -159,17 +174,16 @@ export async function getPriceAtTime (
   timestamp: number,
   chainId: number
 ) {
-  const toSymbol = to === 'ETH' ? `WETH` : to
-  // This pair symbol can also be the other way around... 'WETH-HNY' and HNY-WETH
-  const pairSymbol =
-    from === 'ETH' ? `W${from}-${toSymbol}` : `${from}-${toSymbol}`
-  const pair = pairs.find(
-    o => o.symbol === `${pairSymbol}` && o.chainId === chainId
-  )
+  const sdk = new Sdk(chainId)
+
+  const pair = await getPairFromSymbols(from, to, chainId)
+
   if (!pair)
     throw new Error(
-      `No pair found for pairSymbol ${pairSymbol} and chainID ${chainId}`
+      `No pair found from ${from} to ${to} and chainID ${chainId}`
     )
+
+  console.log(`pair : ${JSON.stringify(pair, null, 2)}`)
 
   const swap = await fetchSwapForPair(
     pair.address,
