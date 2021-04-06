@@ -25,45 +25,60 @@ async function processDonations (donations) {
         ? 'WXDAI'
         : 'USDC'
 
-    let valueEth, valueUsd, priceEth: number, priceUsd: number
+    let valueEth,
+      valueUsd,
+      priceInEth: number,
+      priceOfEth: number,
+      priceInUsd: number
     if (
       donation.currency === 'ETH' ||
       donation.currency === 'XDAI' ||
       donation.currency === 'DAI'
     ) {
-      priceEth = await getPriceAtTime('ETH', 'USDC', donatedTime, chainId)
+      priceOfEth = await getPriceAtTime('ETH', 'USDC', donatedTime, chainId)
 
       if (donation.currency === 'ETH') {
+        priceInEth = 1
         valueEth = donation.amount
-        valueUsd = (1 / priceEth) * donation.amount
-        priceUsd = 1 / priceEth
+        priceInUsd = priceOfEth
+        valueUsd = priceOfEth * donation.amount
       } else if (donation.currency === 'XDAI' || donation.currency === 'DAI') {
-        valueEth = (1 / priceEth) * donation.amount
+        priceInUsd = 1
         valueUsd = donation.amount
-        priceUsd = 1
+        priceInEth = priceOfEth
+        valueEth = (1 / priceOfEth) * donation.amount
       }
     } else {
       if (donation.currency === 'YAY') {
-        priceEth = 200
-        priceUsd = 10
+        priceInEth = 0.02
+        priceInUsd = 10
       } else {
-        priceEth = await getPriceAtTime(
+        console.log(`donation.currency ---> : ${donation.currency}`)
+        console.log(`chainId 1 ---> : ${chainId}`)
+        const priceTokenPerEth = await getPriceAtTime(
           donation.currency,
           'ETH',
           donatedTime,
           chainId
         )
+        priceInEth = 1 / priceTokenPerEth
+        console.log(`priceTokenPerEth ---> : ${priceTokenPerEth}`)
+        console.log('------')
 
-        priceUsd = await convertPriceEthToUsd(priceEth, donatedTime, chainId)
+        console.log(`donatedTime ---> : ${donatedTime}`)
+        priceInUsd = await convertPriceEthToUsd(priceInEth, donatedTime)
+        console.log(`priceInUsd ---> : ${priceInUsd}`)
+
+        valueEth = priceInEth * donation.amount
       }
 
-      valueEth = priceEth * donation.amount
-      valueUsd = priceUsd * donation.amount
+      valueEth = priceInEth * donation.amount
+      valueUsd = priceInUsd * donation.amount
     }
 
     const res = await client.query(
       'update donation set "priceEth" = $1, "valueEth" = $3, "priceUsd" = $4, "valueUsd" = $5 where id = $2',
-      [priceEth, donation.id, valueEth, priceUsd, valueUsd]
+      [priceInEth, donation.id, valueEth, priceInUsd, valueUsd]
     )
     result = it.next()
   }
