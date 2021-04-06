@@ -61,13 +61,14 @@ async function processDonations (donations) {
           donatedTime,
           chainId
         )
-        priceInEth = 1 / priceTokenPerEth
+        priceInEth = priceTokenPerEth
         console.log(`priceTokenPerEth ---> : ${priceTokenPerEth}`)
         console.log('------')
 
         console.log(`donatedTime ---> : ${donatedTime}`)
-        priceInUsd = await convertPriceEthToUsd(priceInEth, donatedTime)
-        console.log(`priceInUsd ---> : ${priceInUsd}`)
+        console.log(`priceInEth ---> : ${priceInEth}`)
+        priceInUsd = await convertPriceEthToUsd(priceTokenPerEth, donatedTime)
+        console.log(`priceInUsd ? ---> : ${priceInUsd}`)
 
         valueEth = priceInEth * donation.amount
       }
@@ -88,7 +89,7 @@ async function run () {
   await client.connect()
 
   const res = await client.query(
-    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d`
+    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where d.id = 64`
   )
 
   await processDonations(res.rows)
