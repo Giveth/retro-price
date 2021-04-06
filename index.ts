@@ -62,11 +62,14 @@ async function processDonations (donations) {
           chainId
         )
         priceInEth = priceTokenPerEth
-        console.log(`priceTokenPerEth ---> : ${priceTokenPerEth}`)
         console.log('------')
 
-        console.log(`donatedTime ---> : ${donatedTime}`)
         console.log(`priceInEth ---> : ${priceInEth}`)
+        console.log('...')
+
+        console.log(`priceTokenPerEth ---> : ${priceTokenPerEth}`)
+        console.log(`donatedTime ---> : ${donatedTime}`)
+
         priceInUsd = await convertPriceEthToUsd(priceTokenPerEth, donatedTime)
         console.log(`priceInUsd ? ---> : ${priceInUsd}`)
 
