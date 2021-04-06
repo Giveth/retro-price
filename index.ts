@@ -43,15 +43,19 @@ async function processDonations (donations) {
         priceUsd = 1
       }
     } else {
-      priceEth = await getPriceAtTime(
-        donation.currency,
-        'ETH',
-        donatedTime,
-        chainId
-      )
+      if (donation.currency === 'YAY') {
+        priceEth = 200
+        priceUsd = 10
+      } else {
+        priceEth = await getPriceAtTime(
+          donation.currency,
+          'ETH',
+          donatedTime,
+          chainId
+        )
 
-      console.log(`priceEth at time ---> : ${priceEth}`)
-      priceUsd = await convertPriceEthToUsd(priceEth, donatedTime)
+        priceUsd = await convertPriceEthToUsd(priceEth, donatedTime, chainId)
+      }
 
       valueEth = priceEth * donation.amount
       valueUsd = priceUsd * donation.amount
