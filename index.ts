@@ -1,6 +1,8 @@
 const { Client } = require('pg')
 import { getPriceAtTime, convertPriceEthToUsd } from 'monoswap'
 import * as dotenv from 'dotenv'
+const chalk = require('chalk')
+
 dotenv.config()
 
 const client = new Client({
@@ -29,7 +31,10 @@ async function processDonations (donations) {
       valueUsd,
       priceInEth: number,
       priceOfEth: number,
-      priceInUsd: number
+      priceInUsd: number,
+      pricePerToken: number,
+      ethPerToken: number,
+      usdPerToken: number
     if (
       donation.currency === 'ETH' ||
       donation.currency === 'XDAI' ||
@@ -53,27 +58,36 @@ async function processDonations (donations) {
         priceInEth = 0.02
         priceInUsd = 10
       } else {
-        console.log(`donation.currency ---> : ${donation.currency}`)
-        console.log(`chainId 1 ---> : ${chainId}`)
-        const priceTokenPerEth = await getPriceAtTime(
+        // console.log('  ')
+        // console.log('  ')
+
+        // console.log(
+        //   `_________________ ${donation.currency} ____________________`
+        // )
+
+        // console.log(`donation.currency ---> : ${donation.currency}`)
+        // console.log(`donation.amount ---> : ${donation.amount}`)
+        // console.log(`chainId 1 ---> : ${chainId}`)
+        // console.log(`donatedTime ---> : ${donatedTime}`)
+
+        ethPerToken = await getPriceAtTime(
           donation.currency,
           'ETH',
           donatedTime,
           chainId
         )
-        priceInEth = priceTokenPerEth
-        console.log('------')
+        //console.log(chalk.blue(`ethPerToken ---> : ${ethPerToken}`))
 
-        console.log(`priceInEth ---> : ${priceInEth}`)
-        console.log('...')
+        usdPerToken = await convertPriceEthToUsd(ethPerToken, donatedTime)
 
-        console.log(`priceTokenPerEth ---> : ${priceTokenPerEth}`)
-        console.log(`donatedTime ---> : ${donatedTime}`)
+        //console.log(chalk.green(`usdPerToken ? ---> : ${usdPerToken}`))
 
-        priceInUsd = await convertPriceEthToUsd(priceTokenPerEth, donatedTime)
-        console.log(`priceInUsd ? ---> : ${priceInUsd}`)
+        //valueEth = (1 / pricePerToken) * donation.amount
+        valueEth = ethPerToken * donation.amount
+        valueUsd = usdPerToken * donation.amount
 
-        valueEth = priceInEth * donation.amount
+        priceInEth = ethPerToken
+        priceInUsd = usdPerToken
       }
 
       valueEth = priceInEth * donation.amount
@@ -92,7 +106,7 @@ async function run () {
   await client.connect()
 
   const res = await client.query(
-    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d`
+    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where d.id=94 OR d.id=64`
   )
 
   await processDonations(res.rows)
