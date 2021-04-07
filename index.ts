@@ -106,7 +106,7 @@ async function run () {
   await client.connect()
 
   const res = await client.query(
-    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where d.id=94 OR d.id=64`
+    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d where`
   )
 
   await processDonations(res.rows)
