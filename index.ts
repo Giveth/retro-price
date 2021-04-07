@@ -91,8 +91,15 @@ async function processDonations (donations) {
       valueUsd = priceInUsd * donation.amount
     }
     console.log(
-      `{priceInEth, donation.id, valueEth, priceInUsd, valueUsd} : ${JSON.stringify(
-        { priceInEth, donationId: donation.id, valueEth, priceInUsd, valueUsd },
+      `{priceOfEth, priceInEth, donation.id, valueEth, priceInUsd, valueUsd} : ${JSON.stringify(
+        {
+          priceOfEth,
+          priceInEth,
+          donationId: donation.id,
+          valueEth,
+          priceInUsd,
+          valueUsd
+        },
         null,
         2
       )}`
