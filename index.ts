@@ -41,8 +41,14 @@ async function processDonations (donations) {
       donation.currency === 'XDAI' ||
       donation.currency === 'DAI'
     ) {
-      priceOfEth = await getPriceAtTime('ETH', 'USDC', donatedTime, chainId)
+      const usdPerEth = await getPriceAtTime(
+        'ETH',
+        'USDC',
+        donatedTime,
+        chainId
+      )
 
+      priceOfEth = 1 / usdPerEth
       if (donation.currency === 'ETH') {
         priceInEth = 1
         valueEth = donation.amount
