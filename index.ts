@@ -35,6 +35,7 @@ async function processDonations (donations) {
       pricePerToken: number,
       ethPerToken: number,
       usdPerToken: number
+    console.log(`_________________ ${donation.id} ____________________`)
     if (
       donation.currency === 'ETH' ||
       donation.currency === 'XDAI' ||
@@ -60,10 +61,6 @@ async function processDonations (donations) {
       } else {
         // console.log('  ')
         // console.log('  ')
-
-        // console.log(
-        //   `_________________ ${donation.currency} ____________________`
-        // )
 
         // console.log(`donation.currency ---> : ${donation.currency}`)
         // console.log(`donation.amount ---> : ${donation.amount}`)
@@ -93,6 +90,13 @@ async function processDonations (donations) {
       valueEth = priceInEth * donation.amount
       valueUsd = priceInUsd * donation.amount
     }
+    console.log(
+      `{priceInEth, donation.id, valueEth, priceInUsd, valueUsd} : ${JSON.stringify(
+        { priceInEth, donationId: donation.id, valueEth, priceInUsd, valueUsd },
+        null,
+        2
+      )}`
+    )
 
     const res = await client.query(
       'update donation set "priceEth" = $1, "valueEth" = $3, "priceUsd" = $4, "valueUsd" = $5 where id = $2',
