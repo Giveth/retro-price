@@ -19,13 +19,16 @@ async function processDonations (donations) {
   while (!result.done) {
     const donation = result.value
     const donatedTime = Math.round(donation.donatedTime)
-    const chainId =
-      donation.currency === 'HNY' || donation.currency === 'WXDAI' ? 100 : 1
+    console.log(`donation : ${JSON.stringify(donation, null, 2)}`)
+
+    //process.exit()
+    const chainId = donation.transactionNetworkId === 100 ? 100 : 1
+    // const chainId =
+    //   donation.currency === 'HNY' || donation.currency === 'WXDAI' ? 100 : 1
 
     const baseCurrency =
-      donation.currency === 'HNY' || donation.currency === 'WXDAI'
-        ? 'WXDAI'
-        : 'USDC'
+      //donation.currency === 'HNY' || donation.currency === 'WXDAI'
+      chainId === 100 ? 'WXDAI' : 'USDC'
 
     let valueEth,
       valueUsd,
@@ -41,12 +44,7 @@ async function processDonations (donations) {
       donation.currency === 'XDAI' ||
       donation.currency === 'DAI'
     ) {
-      const usdPerEth = await getPriceAtTime(
-        'ETH',
-        'USDC',
-        donatedTime,
-        chainId
-      )
+      const usdPerEth = await getPriceAtTime('ETH', 'USDC', donatedTime, 1)
 
       priceOfEth = 1 / usdPerEth
       if (donation.currency === 'ETH') {
@@ -123,7 +121,7 @@ async function run () {
   await client.connect()
 
   const res = await client.query(
-    `select d.id, d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d`
+    `select d.id, d."transactionNetworkId", d.amount, d.currency, d."createdAt" , EXTRACT(EPOCH from d."createdAt") as "donatedTime" from donation d`
   )
 
   await processDonations(res.rows)
